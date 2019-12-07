@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: WebCrawler
+Implementation-Version: 1.0-SNAPSHOT
+Main-Class: com.scalablecapital.Main
+

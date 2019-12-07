@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'com.scalablecapital'
+version version
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'WebCrawler',
+                'Implementation-Version': version,
+                'Main-Class': 'com.scalablecapital.Main'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
