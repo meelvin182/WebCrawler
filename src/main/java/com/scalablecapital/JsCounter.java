@@ -3,6 +3,7 @@ package com.scalablecapital;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -15,8 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
-import static com.scalablecapital.functions.UrlExtractorFunctions.getBeforeAmpersand;
-import static com.scalablecapital.functions.UrlExtractorFunctions.getBeforeQuestion;
+import static com.scalablecapital.functions.UrlExtractorFunctions.*;
 
 
 @Slf4j
@@ -31,12 +31,13 @@ class JsCounter {
     }
 
 
-    void getAndCount(String link) throws IOException, GeneralSecurityException, ExecutionException, InterruptedException {
+    void getAndCountJsLibs(String link, CloseableHttpAsyncClient client) throws IOException, GeneralSecurityException, InterruptedException {
         log.info("checking link = {}", link);
         PageDownloader pageDownloader = new PageDownloader();
-        Optional<String> page = pageDownloader.downloadPage(link);
+
+        Optional<String> page = pageDownloader.downloadPage(link,client);
         if (!page.isPresent()) {
-            log.info("noting to download for = {}", page);
+            log.info("noting to download for = {}", link);
             return;
         }
         Document document = Jsoup.parse(page.get());
@@ -45,7 +46,11 @@ class JsCounter {
             Optional.of(scriptSourse).map(getBeforeAmpersand).map(getBeforeQuestion).map(s -> {
                 if (!s.isEmpty()) {
                     log.info("found {}", s);
-                    jsMapStorage.computeIfAbsent(s, key -> new LongAdder()).increment();
+                    jsMapStorage
+                            .computeIfAbsent(Optional.of(s).
+                                    map(getBeforejsExtention).
+                                    orElseThrow(() -> new RuntimeException("Failed to compute"))
+                                    , key -> new LongAdder()).increment();
                 }
                 return jsMapStorage;
             });
@@ -53,3 +58,5 @@ class JsCounter {
     }
 
 }
+
+

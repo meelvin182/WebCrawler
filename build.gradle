@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id "com.diffplug.gradle.spotless" version "3.26.1"
 }
 
 group 'com.scalablecapital'
@@ -33,7 +34,5 @@ dependencies {
     compile 'org.jsoup:jsoup:1.12.1'
 // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient
     compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.4'
-
-
-
 }
+

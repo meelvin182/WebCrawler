@@ -24,4 +24,13 @@ public class UrlExtractorFunctions {
         return tmp;
     };
 
+    public static Function<String, String> getBeforejsExtention = url -> {
+        String tmp = url;
+        if (url.contains(".js") && !url.endsWith(".js")) {
+            tmp = url.substring(0, url.indexOf(".js") + 4);
+        }
+        return tmp;
+    };
+
+
 }
