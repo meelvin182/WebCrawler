@@ -2,3 +2,5 @@
 *.iml
 *.html
 .grade/
+build/
+out/
