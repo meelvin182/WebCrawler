@@ -21,11 +21,11 @@ import java.security.GeneralSecurityException;
  */
 
 @Slf4j
-public class HttpClientHolder {
+class HttpClientHolder {
 
     private static volatile HttpClientHolder instance;
 
-    public static HttpClientHolder getInstance() throws GeneralSecurityException, IOReactorException {
+    static HttpClientHolder getInstance() throws GeneralSecurityException, IOReactorException {
         if (instance == null) {
             synchronized (HttpClientHolder.class) {
                 if (instance == null) {

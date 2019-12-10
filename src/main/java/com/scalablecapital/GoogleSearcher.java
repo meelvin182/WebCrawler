@@ -6,12 +6,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.scalablecapital.functions.UrlExtractorFunctions.*;
@@ -21,6 +18,12 @@ import static com.scalablecapital.functions.UrlExtractorFunctions.*;
  */
 @Slf4j
 class GoogleSearcher {
+    /**
+     * This methods shoud query the google and get the main links for the first page
+     * @param queryParam which param should we query
+     * @return List with links to the main pages
+     * @throws Exception
+     */
     Collection<String> findMainResultLinks(String queryParam) throws Exception {
         String googleMainSearch = "http://www.google.com/search?&ie=utf-8&oe=utf-8&q=" + queryParam;
         PageDownloader pageDownloader = new PageDownloader();

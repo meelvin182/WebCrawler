@@ -34,5 +34,16 @@ dependencies {
     compile 'org.jsoup:jsoup:1.12.1'
 // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient
     compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.4'
+// https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.4'
+// https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.4'
+
+    // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+
+    
+
+
 }
 
