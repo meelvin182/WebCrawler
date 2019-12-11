@@ -1,8 +1,6 @@
 package com.scalablecapital;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -14,8 +12,7 @@ import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-public class JsCounterTest extends BasicWebTest {
+public class JsCounterTest extends TestSetUp {
 
     private JsCounter jsCounter = new JsCounter(storage, pageDownloaderMock);
 

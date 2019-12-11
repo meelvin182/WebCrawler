@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-public class GoogleSearcherWebTest extends BasicWebTest {
+public class GoogleSearcherWebTest extends TestSetUp {
 
 
     private GoogleSearcher googleSearcher = new GoogleSearcher(pageDownloaderMock);
