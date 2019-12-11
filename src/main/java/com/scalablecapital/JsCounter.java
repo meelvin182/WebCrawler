@@ -33,7 +33,7 @@ class JsCounter {
      * @param links From what link we should crawl the libs
      */
     void downloadAndCountJsLibs(List<String> links) {
-        log.info("checking link = {}", links);
+        log.debug("checking link = {}", links);
         List<String> pages = pageDownloader.downloadPages(links);
         if (pages.isEmpty()) {
             log.info("noting to download for = {}", links);
