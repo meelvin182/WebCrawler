@@ -2,29 +2,50 @@ package com.scalablecapital;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClientHolder.class)
-@PowerMockIgnore("javax.net.ssl.*")
 public class JsCounterTest extends BasicWebTest {
 
-    private JsCounter jsCounter = new JsCounter(storage);
+    private JsCounter jsCounter = new JsCounter(storage, pageDownloaderMock);
 
     @Test
-    public void testGetAndCountJsLibs() throws Exception {
-        when(pageDownloader.downloadPage("http://www.google.com/search?&ie=utf-8&oe=utf-8&q=stackoverflow", HttpClientHolder.getInstance().getHttpAsyncClient())).thenReturn(Optional.of(getFileFromResourceFolder("stackoverflowgoogleresult.html")));
-        when(googleSearcher.findMainResultLinks("http://www.google.com/search?&ie=utf-8&oe=utf-8&q=stackoverflow")).thenReturn(Collections.singleton(getFileFromResourceFolder("stackoverflowmain.html")));
-        jsCounter.getAndCountJsLibs("https://ru.stackoverflow.com/",HttpClientHolder.getInstance().getHttpAsyncClient());
-        assertThat(jsCounter.getTopFive(),hasSize(2));
+    public void testDownloadAndCountJsLibs() throws URISyntaxException {
+
+        List<String> htmlsForStackOverFlowGoogle = new ArrayList<>();
+
+        for (int i = 0; i < 6; i++) {
+            htmlsForStackOverFlowGoogle.add(getFileFromResourceFolder("StackOverFlowGoogle" + i + ".html"));
+        }
+
+
+        List<String> resultsForStackOverFlowGoogleList = Arrays.asList("https://ru.stackoverflow.com/",
+                "https://ru.wikipedia.org/wiki/Stack_Overflow",
+                "https://stackoverflow.blog/",
+                "https://stackoverflow.blog/2019/07/18/building-community-inclusivity-stack-overflow/",
+                "https://twitter.com/stackoverflow",
+                "https://www.stackoverflowbusiness.com/advertising",
+                "https://www.stackoverflowbusiness.com/");
+
+
+        when(pageDownloaderMock.downloadPages(resultsForStackOverFlowGoogleList)).thenReturn(htmlsForStackOverFlowGoogle);
+
+        jsCounter.downloadAndCountJsLibs(resultsForStackOverFlowGoogleList);
+
+        System.out.println(jsCounter.getJsMapStorage());
+
+        assertThat(jsCounter.getJsMapStorage(), aMapWithSize(25));
+
+        assertThat(jsCounter.getTopFive(),hasSize(5));
     }
 }

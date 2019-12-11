@@ -1,49 +1,54 @@
 package com.scalablecapital;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Optional;
-import java.util.concurrent.Future;
-
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 
 @Slf4j
+@AllArgsConstructor
 class PageDownloader {
+
+    private final HttpClient httpClient;
+
     /**
-     * This method just gets the hmlt page
-     * @param url From what url we should crawl the libs
-     * @param client Pass a client to use
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws InterruptedException
+     * This method parallel and asyncronously downloads the urls and stores theirs htmls into the list
+     * @param urls Which url we should get
+     * @return list of htmls for each page
      */
-    Optional<String> downloadPage(String url, CloseableHttpAsyncClient client) throws IOException, GeneralSecurityException, InterruptedException {
-        //Closable http client is ThreadSafe @Contract(threading = ThreadingBehavior.SAFE)
-        if (!client.isRunning()) {
-            client.start();
-        }
-        log.info("downloading {}", url);
-        final HttpGet get = new HttpGet(url);
-        Future<HttpResponse> response = client.execute(get, null);
-        HttpResponse httpResponse;
-        try {
-            httpResponse = response.get();
-        } catch (Exception e) {
-            log.error("Cannot connect to" + url);
-            return Optional.empty();
-        }
-        if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            String responseEntity = EntityUtils.toString(httpResponse.getEntity());
-            return Optional.of(responseEntity);
-        }
-        return Optional.empty();
+    List<String> downloadPages(List<String> urls) {
+        log.info("downloading {}", urls);
+        List<CompletableFuture<HttpResponse<String>>> httpResponcesFutures = urls.stream()
+                .map(url -> httpClient.sendAsync(
+                        HttpRequest.newBuilder(URI.create(url))
+                                .GET().setHeader("User-Agent", "Mozilla")
+                                .build(),
+                        HttpResponse.BodyHandlers.ofString())).collect(Collectors.toList());
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                httpResponcesFutures.toArray(new CompletableFuture[0]));
+
+        CompletableFuture<List<HttpResponse<String>>> allPageContentsFuture =
+                allFutures.thenApply(
+                        v -> httpResponcesFutures.stream()
+                                .map(CompletableFuture::join)
+                                .collect(Collectors.toList()));
+
+        CompletableFuture<List<String>> countFuture = allPageContentsFuture
+                .thenApply(
+                        httpResponses -> httpResponses.stream()
+                                .map(HttpResponse::body)
+                                .collect(Collectors.toList()));
+
+
+        return countFuture.join();
     }
 }

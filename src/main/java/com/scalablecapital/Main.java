@@ -1,14 +1,9 @@
 package com.scalablecapital;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Scanner;
+import java.net.http.HttpClient;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -19,40 +14,37 @@ import java.util.concurrent.atomic.LongAdder;
 public class Main {
 
 
-    public static void main(String[] args) throws IOException, GeneralSecurityException {
+    public static void main(String[] args) {
         Optional<String> param = Arrays.stream(args).findFirst();
-        if (!param.isPresent()) {
+        if (param.isEmpty()) {
             Scanner sc = new Scanner(System.in);
             param = Optional.of(sc.nextLine());
         }
         String googleQuery = param.orElseThrow(() -> new RuntimeException("You have not entered any string to google"));
         log.info("You have passed = {}", googleQuery);
-        GoogleSearcher googleSearcher = new GoogleSearcher();
-        Collection<String> googleMainResultLinks;
-        try {
-            googleMainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
-        } catch (Exception e) {
-            log.error("Cannot get the main result link because or {}", e.getMessage());
-            return;
-        }
+        HttpClient client = HttpClient.newBuilder().build();
+        // basically all the code in main method could be in one line
+        // 1) Get the CF for google query
+        // 2) Then parse and get the main result links using supply async
+        // 3) CF::allOf for google results
+        // 4) CF::thenCompose with the root
+        // 5) chain of CF::theApply to parse results
+        // 6) ?
+        // 7) ?
+        // 8) PROFIT
+        // BUT this kind of solution is undebugable and too complex to test
 
-        log.info("Found main results = {}", googleMainResultLinks);
+        Map<String, LongAdder> storage = new ConcurrentHashMap<>();
 
-        ConcurrentHashMap<String, LongAdder> storage = new ConcurrentHashMap<>();
-        final JsCounter jsCounter = new JsCounter(storage);
-        //do not live this solution with passing httpclient to getAndCountJsLibs, but thus I can give 1 client
-        try (CloseableHttpAsyncClient closeableHttpAsyncClient = HttpClientHolder.getInstance().getHttpAsyncClient()) {
-            googleMainResultLinks.stream().forEach(link -> {
-                try {
-                    jsCounter.getAndCountJsLibs(link, closeableHttpAsyncClient);
-                } catch (Exception e) {
-                    log.error("getAndCountJsLibs failed with error = {}", e.getMessage());
-                }
+        PageDownloader pageDownloader = new PageDownloader(client);
+        GoogleSearcher googleSearcher = new GoogleSearcher(pageDownloader);
+        List<String> mainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
 
-            });
-        }
+        JsCounter jsCounter = new JsCounter(storage,pageDownloader);
 
-        System.out.println(jsCounter.getTopFive());
+        jsCounter.downloadAndCountJsLibs(mainResultLinks);
+
+        jsCounter.getTopFive().forEach(System.out::println);
 
     }
 
