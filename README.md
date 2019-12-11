@@ -16,5 +16,5 @@ cd WebCrawler
 ./gradlew.sh clean build
 cd build/libs
 java -jar *.jar %INSERT QUERY PARAM%
-###or
+## or
 java -jar *.jar
