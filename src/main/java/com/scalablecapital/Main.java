@@ -18,6 +18,7 @@ public class Main {
         Optional<String> param = Arrays.stream(args).findFirst();
         if (param.isEmpty()) {
             Scanner sc = new Scanner(System.in);
+            System.out.println("Please enter a query param");
             param = Optional.of(sc.nextLine());
         }
         String googleQuery = param.orElseThrow(() -> new RuntimeException("You have not entered any string to google"));
