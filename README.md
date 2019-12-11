@@ -7,7 +7,7 @@ As task asked to use minimum of 3rd party I have choosen native java http client
 Only Lombok (for @Slf4j and @AllArgsConstructor),Jsoup and some test 3rd-party libraries are used.
 
 
-Also, this task would be mach more simplier to implement using Kotlin and Ktor (https://ktor.io/) basically because awesome coroutines in this language
+Also, this task would be mach more simplier to implement using Kotlin and Ktor (https://ktor.io/) basically because of awesome coroutines in this language
 
 
 ##How to use
