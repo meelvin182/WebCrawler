@@ -36,7 +36,7 @@ class JsCounter {
         log.debug("checking link = {}", links);
         List<String> pages = pageDownloader.downloadPages(links);
         if (pages.isEmpty()) {
-            log.info("noting to download for = {}", links);
+            log.error("noting to download for = {}", links);
             return;
         }
 
@@ -46,7 +46,7 @@ class JsCounter {
             for (String scriptSource : scripts) {
                 Optional.of(scriptSource).map(extractBeforeAmpersand).map(this::extractBeforejsExtention).map(s -> {
                     if (!s.isEmpty()) {
-                        log.info("found {}", s);
+                        log.debug("found {}", s);
                         jsMapStorage
                                 .computeIfAbsent(Optional.of(s).
                                                 map(this::extractBeforejsExtention).
