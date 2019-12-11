@@ -68,12 +68,14 @@ class JsCounter {
      * @return
      */
     List<String> getTopFive() {
-        LinkedHashMap<String, Integer> linkedHashMap = new LinkedHashMap<>();
+        Map<String, Integer> linkedHashMap = new LinkedHashMap<>();
+
+
+
         getJsMapStorage().forEach((key, val) -> linkedHashMap.put(key, val.intValue()));
-        LinkedHashMap<String, Integer> jsCountSorted =
+        Map<String, Integer> jsCountSorted =
                 linkedHashMap.entrySet().stream().sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
         return jsCountSorted.entrySet().stream().limit(5).map(e -> "js='" + e.getKey() + "\t=\t" + e.getValue())
                 .collect(Collectors.toList());
 

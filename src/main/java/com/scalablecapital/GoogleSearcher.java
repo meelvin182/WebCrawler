@@ -37,7 +37,7 @@ class GoogleSearcher {
         if (mainPage.size() != 1) {
             throw new RuntimeException("The page is not valid");
         }
-/*        Document doc = Jsoup.parse(mainPage.get(0));
+        Document doc = Jsoup.parse(mainPage.get(0));
         //CSS qurery to select all child from kCrYt
         // I do not love the solutiuon with hard-coded div class, but could not google anything better (using google search engine is even worse)
         Elements firstPageLinks = doc.select("div.kCrYT > a[href]");
@@ -47,8 +47,7 @@ class GoogleSearcher {
                 .map(Objects::toString)
                 .map(extractBeforeAmpersand)
                 .map(extractBeforeQuestionMark)
-                .collect(Collectors.toList());*/
-return null;
+                .collect(Collectors.toList());
     }
 
 }
