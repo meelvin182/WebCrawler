@@ -1,6 +1,7 @@
 package com.scalablecapital;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -17,6 +18,7 @@ import static com.scalablecapital.functions.UrlExtractorFunctions.*;
 
 
 @Slf4j
+@AllArgsConstructor
 class JsCounter {
 
     @Getter
@@ -24,17 +26,13 @@ class JsCounter {
 
     private final PageDownloader pageDownloader;
 
-    JsCounter(Map<String, LongAdder> storage, PageDownloader pageDownloader) {
-        jsMapStorage = storage;
-        this.pageDownloader = pageDownloader;
-    }
 
     /**
      * This method parses the html page and stores the js libs inthe to storage
      *
      * @param links From what link we should crawl the libs
      */
-    void getAndCountJsLibs(List<String> links) {
+    void downloadAndCountJsLibs(List<String> links) {
         log.info("checking link = {}", links);
         List<String> pages = pageDownloader.downloadPages(links);
         if (pages.isEmpty()) {
@@ -42,17 +40,16 @@ class JsCounter {
             return;
         }
 
-
         for (String page : pages) {
             Document document = Jsoup.parse(page);
             List<String> scripts = document.select("script").stream().map(s -> s.attr("src")).collect(Collectors.toList());
-            for (String scriptSourse : scripts) {
-                Optional.of(scriptSourse).map(extractBeforeAmpersand).map(extractBeforeQuestionMark).map(s -> {
+            for (String scriptSource : scripts) {
+                Optional.of(scriptSource).map(extractBeforeAmpersand).map(this::extractBeforejsExtention).map(s -> {
                     if (!s.isEmpty()) {
                         log.info("found {}", s);
                         jsMapStorage
                                 .computeIfAbsent(Optional.of(s).
-                                                map(getBeforejsExtention).
+                                                map(this::extractBeforejsExtention).
                                                 orElseThrow(() -> new RuntimeException("Failed to compute"))
                                         , key -> new LongAdder()).increment();
                     }
@@ -62,6 +59,14 @@ class JsCounter {
         }
     }
 
+
+    private String extractBeforejsExtention(String libName) {
+        String tmp = libName;
+        if (libName.contains(".js") && !libName.endsWith(".js")) {
+            tmp = libName.substring(0, libName.indexOf(".js") + 4);
+        }
+        return tmp;
+    }
     /**
      * Just get top5 libs
      *

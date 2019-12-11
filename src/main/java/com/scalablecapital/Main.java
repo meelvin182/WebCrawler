@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class Main {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Optional<String> param = Arrays.stream(args).findFirst();
         if (param.isEmpty()) {
             Scanner sc = new Scanner(System.in);
@@ -22,24 +22,29 @@ public class Main {
         }
         String googleQuery = param.orElseThrow(() -> new RuntimeException("You have not entered any string to google"));
         log.info("You have passed = {}", googleQuery);
-
-        HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newBuilder().build();
         // basically all the code in main method could be in one line
         // 1) Get the CF for google query
         // 2) Then parse and get the main result links using supply async
         // 3) CF::allOf for google results
-        // 4) CF::combine with the root
+        // 4) CF::thenCompose with the root
+        // 5) chain of CF::theApply to parse results
+        // 6) ?
+        // 7) ?
+        // 8) PROFIT
+        // BUT this kind of solution is undebugable and too complex to test
+
         Map<String, LongAdder> storage = new ConcurrentHashMap<>();
-        GoogleSearcher googleSearcher = new GoogleSearcher(client);
+
         PageDownloader pageDownloader = new PageDownloader(client);
+        GoogleSearcher googleSearcher = new GoogleSearcher(pageDownloader);
         List<String> mainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
 
         JsCounter jsCounter = new JsCounter(storage,pageDownloader);
 
-        jsCounter.getAndCountJsLibs(mainResultLinks);
+        jsCounter.downloadAndCountJsLibs(mainResultLinks);
 
-        System.out.println(storage);
-
+        jsCounter.getTopFive().forEach(System.out::println);
 
     }
 

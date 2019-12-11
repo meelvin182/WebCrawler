@@ -1,6 +1,7 @@
 package com.scalablecapital;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -13,13 +14,10 @@ import java.util.stream.Collectors;
 
 
 @Slf4j
+@AllArgsConstructor
 class PageDownloader {
 
     private final HttpClient httpClient;
-
-    PageDownloader(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     /**
      * This method parallel and asyncronously downloads the urls and stores theirs htmls into the list
@@ -49,6 +47,7 @@ class PageDownloader {
                         httpResponses -> httpResponses.stream()
                                 .map(HttpResponse::body)
                                 .collect(Collectors.toList()));
+
 
         return countFuture.join();
     }
