@@ -2,7 +2,7 @@
 Test task for Scalable Capital
 
 
-As task asked to use minimum of 3rd party I have choosen native java http client (in jdk since Java 11 (LTS)) to handle async http calls
+As task asked to use minimum of 3rd party I have choosen native java http client (in jdk since Java 11 (LTS)) to handle async http calls thus jdk 11 is required
 
 Only Lombok (for @Slf4j and @AllArgsConstructor),Jsoup and some test 3rd-party libraries are used.
 
