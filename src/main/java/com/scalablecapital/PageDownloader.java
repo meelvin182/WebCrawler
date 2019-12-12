@@ -30,8 +30,6 @@ class PageDownloader {
      */
     List<String> downloadPages(List<String> urls) {
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-
         log.info("downloading {}", urls);
         List<CompletableFuture<HttpResponse<String>>> httpResponsesFutures = urls.stream()
                 .map(url -> httpClient.sendAsync(
@@ -40,11 +38,11 @@ class PageDownloader {
                                 .setHeader("User-Agent", "Mozilla")
                                 .build(),
                         HttpResponse.BodyHandlers.ofString())
-                                .handle((res, ex) -> {
-                                    if (ex != null) {
-                                        log.error("Got exception = {} for url = {}", ex.getMessage(), url);
-                                        return null;
-                                    } else return res;
+                        .handle((res, ex) -> {
+                            if (ex != null) {
+                                log.error("Got exception = {} for url = {}", ex.getMessage(), url);
+                                return null;
+                            } else return res;
                         })).collect(Collectors.toList());
 
         CompletableFuture<?> allFutures = CompletableFuture.allOf(
@@ -53,7 +51,7 @@ class PageDownloader {
                 allFutures.thenApplyAsync(
                         v -> httpResponsesFutures.stream()
                                 .map(CompletableFuture::join)
-                                .collect(Collectors.toList()),executorService);
+                                .collect(Collectors.toList()));
 
         CompletableFuture<List<String>> countFuture = allPageContentsFuture
                 .thenApplyAsync(
@@ -61,7 +59,7 @@ class PageDownloader {
                                 .filter(Objects::nonNull)
                                 .map(HttpResponse::body)
                                 .filter(body -> body.startsWith("<!"))
-                                .collect(Collectors.toList()),executorService);
+                                .collect(Collectors.toList()));
 
         return countFuture.join();
     }
