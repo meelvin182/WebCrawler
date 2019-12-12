@@ -21,9 +21,9 @@ class PageDownloader {
     private final HttpClient httpClient;
 
     /**
-     * This method parallel and asyncronously downloads the urls and stores theirs htmls into the list
+     * This method asynchronously downloads the urls and stores theirs htmls into the list
      *
-     * @param urls Which url we should get
+     * @param urls Which urls we should get
      * @return list of htmls for each page
      */
     List<String> downloadPages(List<String> urls) {

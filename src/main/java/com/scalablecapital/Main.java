@@ -26,7 +26,6 @@ public class Main {
 
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
 
-
         // basically all the code in main method could be in one line
         // CF stands for CompletableFuture
         // 1) Get the CF for google query
