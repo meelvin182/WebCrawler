@@ -3,6 +3,7 @@ package com.scalablecapital;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
@@ -22,7 +23,10 @@ public class Main {
         }
         String googleQuery = param.get();
         log.info("You have passed = {}", googleQuery);
-        HttpClient client = HttpClient.newBuilder().build();
+
+        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
+
+
         // basically all the code in main method could be in one line
         // CF stands for CompletableFuture
         // 1) Get the CF for google query
