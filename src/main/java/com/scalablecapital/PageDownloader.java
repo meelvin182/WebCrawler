@@ -11,8 +11,6 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
@@ -29,7 +27,6 @@ class PageDownloader {
      * @return list of htmls for each page
      */
     List<String> downloadPages(List<String> urls) {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
 
         log.info("downloading {}", urls);
         List<CompletableFuture<HttpResponse<String>>> httpResponsesFutures = urls.stream()
