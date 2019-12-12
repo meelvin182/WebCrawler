@@ -1,5 +1,6 @@
 package com.scalablecapital;
 
+import com.scalablecapital.functions.UrlExtractorFunctions;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -11,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.scalablecapital.functions.UrlExtractorFunctions.extractBeforeAmpersand;
 
 /**
  * @author sokolov
@@ -41,7 +41,7 @@ class GoogleSearcher {
                 map(s -> s.attr("href"))
                 .map(this::removeUrlQ)
                 .map(Objects::toString)
-                .map(extractBeforeAmpersand)
+                .map(UrlExtractorFunctions::extractBeforeAmpersand)
                 .map(this::extractBeforeQuestionMark)
                 .collect(Collectors.toList());
     }

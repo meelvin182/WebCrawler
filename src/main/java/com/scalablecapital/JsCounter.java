@@ -1,6 +1,7 @@
 package com.scalablecapital;
 
 
+import com.scalablecapital.functions.UrlExtractorFunctions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,13 +45,13 @@ class JsCounter {
             Document document = Jsoup.parse(page);
             List<String> scripts = document.select("script").stream().map(s -> s.attr("src")).collect(Collectors.toList());
             for (String scriptSource : scripts) {
-                Optional.of(scriptSource).map(extractBeforeAmpersand).map(this::extractBeforejsExtention).map(s -> {
+                Optional.of(scriptSource).map(UrlExtractorFunctions::extractBeforeAmpersand).map(UrlExtractorFunctions::extractBeforejsExtention).map(s -> {
                     if (!s.isEmpty()) {
                         log.debug("found {}", s);
                         jsMapStorage
-                                .computeIfAbsent(Optional.of(s).
-                                                map(this::extractBeforejsExtention).
-                                                orElseThrow(() -> new RuntimeException("Failed to compute"))
+                                .computeIfAbsent(Optional.of(s)
+                                                .map(UrlExtractorFunctions::extractBeforejsExtention)
+                                                .orElseThrow(() -> new RuntimeException("Failed to compute"))
                                         , key -> new LongAdder()).increment();
                     }
                     return jsMapStorage;
@@ -60,13 +61,8 @@ class JsCounter {
     }
 
 
-    private String extractBeforejsExtention(String libName) {
-        String tmp = libName;
-        if (libName.contains(".js") && !libName.endsWith(".js")) {
-            tmp = libName.substring(0, libName.indexOf(".js") + 4);
-        }
-        return tmp;
-    }
+
+
     /**
      * Just get top5 libs
      *
@@ -81,7 +77,6 @@ class JsCounter {
 
         return jsCountSorted.entrySet().stream().limit(5).map(e -> "js='" + e.getKey() + "\t=\t" + e.getValue())
                 .collect(Collectors.toList());
-
     }
 }
 
