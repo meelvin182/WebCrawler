@@ -1,6 +1,5 @@
 .idea/
 *.iml
-*.html
 .grade/
 build/
 out/

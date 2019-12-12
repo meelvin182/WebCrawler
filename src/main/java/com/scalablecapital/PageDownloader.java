@@ -11,6 +11,8 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
@@ -28,35 +30,38 @@ class PageDownloader {
      */
     List<String> downloadPages(List<String> urls) {
 
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
         log.info("downloading {}", urls);
         List<CompletableFuture<HttpResponse<String>>> httpResponsesFutures = urls.stream()
                 .map(url -> httpClient.sendAsync(
                         HttpRequest.newBuilder(URI.create(url))
-                                .GET().setHeader("User-Agent", "Mozilla")
+                                .GET()
+                                .setHeader("User-Agent", "Mozilla")
                                 .build(),
-                        HttpResponse.BodyHandlers.ofString()).handle((res,ex) ->{
-                    if (ex != null) {
-                        log.error("Got exception = {} for url = {}", ex.getMessage(),url);
-                        return null;
-                    }
-                    else return res;
-                })).collect(Collectors.toList());
+                        HttpResponse.BodyHandlers.ofString())
+                                .handle((res, ex) -> {
+                                    if (ex != null) {
+                                        log.error("Got exception = {} for url = {}", ex.getMessage(), url);
+                                        return null;
+                                    } else return res;
+                        })).collect(Collectors.toList());
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+        CompletableFuture<?> allFutures = CompletableFuture.allOf(
                 httpResponsesFutures.toArray(new CompletableFuture[0]));
         CompletableFuture<List<HttpResponse<String>>> allPageContentsFuture =
-                allFutures.thenApply(
+                allFutures.thenApplyAsync(
                         v -> httpResponsesFutures.stream()
                                 .map(CompletableFuture::join)
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()),executorService);
 
         CompletableFuture<List<String>> countFuture = allPageContentsFuture
-                .thenApply(
+                .thenApplyAsync(
                         httpResponses -> httpResponses.stream()
                                 .filter(Objects::nonNull)
                                 .map(HttpResponse::body)
                                 .filter(body -> body.startsWith("<!"))
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()),executorService);
 
         return countFuture.join();
     }

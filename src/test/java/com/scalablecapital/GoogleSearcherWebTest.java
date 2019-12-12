@@ -21,9 +21,9 @@ public class GoogleSearcherWebTest extends TestSetUp {
         List<String> resultsForStackOverFlowGoogleList = Arrays.asList("https://ru.stackoverflow.com/",
                 "https://ru.wikipedia.org/wiki/Stack_Overflow",
                 "https://stackoverflow.blog/",
-                "https://stackoverflow.blog/2019/07/18/building-community-inclusivity-stack-overflow/",
+                "https://stackoverflow.blog/newsletter/",
                 "https://twitter.com/stackoverflow",
-                "https://www.stackoverflowbusiness.com/advertising",
+                "https://www.linkedin.com/company/stack-overflow",
                 "https://www.stackoverflowbusiness.com/");
 
         when(pageDownloaderMock.downloadPages(Collections.singletonList("http://www.google.com/search?&ie=utf-8&oe=utf-8&q=stackoverflow")))

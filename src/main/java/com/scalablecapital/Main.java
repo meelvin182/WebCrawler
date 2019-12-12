@@ -26,25 +26,26 @@ public class Main {
 
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
 
-        // basically all the code in main method could be in one line
-        // CF stands for CompletableFuture
-        // 1) Get the CF for google query
-        // 2) Then parse and get the main result links using supply async
-        // 3) CF::allOf for google results
-        // 4) CF::thenCompose with the root
-        // 5) chain of CF::theApply to parse results
-        // 6) ?
-        // 7) ?
-        // 8) PROFIT
-        // BUT this kind of solution is undebugable and too complex to test
+        /*
+         basically all the logic could be stored in 1 method (even 1 line)
+         (CF stands for CompletableFuture)
+         1) Get the CF for google query
+         2) Then parse and get the main result links using supply async
+         3) CF::allOf for google results
+         4) CF::thenCompose with the root
+         5) chain of CF::theApply to parse results
+         6) ??
+         7) ???
+         8) PROFIT
+         BUT this kind of solution is undebugable and too complex to test
+         */
 
         Map<String, LongAdder> storage = new ConcurrentHashMap<>();
-
         PageDownloader pageDownloader = new PageDownloader(client);
         GoogleSearcher googleSearcher = new GoogleSearcher(pageDownloader);
-        List<String> mainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
+        JsCounter jsCounter = new JsCounter(storage, pageDownloader);
 
-        JsCounter jsCounter = new JsCounter(storage,pageDownloader);
+        List<String> mainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
 
         jsCounter.downloadAndCountJsLibs(mainResultLinks);
 
