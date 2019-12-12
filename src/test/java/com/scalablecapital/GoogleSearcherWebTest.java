@@ -29,8 +29,6 @@ public class GoogleSearcherWebTest extends TestSetUp {
         when(pageDownloaderMock.downloadPages(Collections.singletonList("http://www.google.com/search?&ie=utf-8&oe=utf-8&q=stackoverflow")))
                 .thenReturn(Collections.singletonList(getFileFromResourceFolder("StackOverFlowSearchResult.html")));
 
-        assertThat(googleSearcher.findMainResultLinks("stackoverflow"), hasSize(7));
-
         assertThat(googleSearcher.findMainResultLinks("stackoverflow"), equalTo(resultsForStackOverFlowGoogleList));
 
     }
