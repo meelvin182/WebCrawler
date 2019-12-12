@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class Main {
 
-
     public static void main(String[] args) {
         Optional<String> param = Arrays.stream(args).findFirst();
         if (param.isEmpty()) {
@@ -21,10 +20,11 @@ public class Main {
             System.out.println("Please enter a query param");
             param = Optional.of(sc.nextLine());
         }
-        String googleQuery = param.orElseThrow(() -> new RuntimeException("You have not entered any string to google"));
+        String googleQuery = param.get();
         log.info("You have passed = {}", googleQuery);
         HttpClient client = HttpClient.newBuilder().build();
         // basically all the code in main method could be in one line
+        // CF stands for CompletableFuture
         // 1) Get the CF for google query
         // 2) Then parse and get the main result links using supply async
         // 3) CF::allOf for google results

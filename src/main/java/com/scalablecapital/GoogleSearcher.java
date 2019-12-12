@@ -33,9 +33,6 @@ class GoogleSearcher {
         String googleMainSearch = GOOGLE_QUERY + queryParam;
         log.info("downloading ={}",googleMainSearch);
         List<String> mainPage = pageDownloader.downloadPages(Collections.singletonList(googleMainSearch));
-        if (mainPage.size() != 1) {
-            throw new RuntimeException("The page is not valid");
-        }
         Document doc = Jsoup.parse(mainPage.get(0));
         //CSS query to select all child from kCrYt
         // I do not love the solution with hard-coded div class, but could not google anything better (using google search engine is even worse)
