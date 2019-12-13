@@ -21,6 +21,7 @@ public class JsCounterTest extends TestSetUp {
 
     @Before
     public void init() throws URISyntaxException {
+
         List<String> htmlsForStackOverFlowGoogle = new ArrayList<>();
 
         for (int i = 0; i < 6; i++) {
@@ -42,18 +43,17 @@ public class JsCounterTest extends TestSetUp {
     @Test
     public void testDownloadAndCountJsLibs() throws URISyntaxException {
 
-
         jsCounter.downloadAndCountJsLibs(resultsForStackOverFlowGoogleList);
 
         System.out.println(jsCounter.getJsMapStorage());
 
-        assertThat(jsCounter.getJsMapStorage(), aMapWithSize(30));
+        assertThat(jsCounter.getJsMapStorage().getStore(), aMapWithSize(30));
     }
 
     @Test
     public void testThatTop5ReturnsFive() {
         jsCounter.downloadAndCountJsLibs(resultsForStackOverFlowGoogleList);
-        assertThat(jsCounter.getTopFive(),hasSize(5));
-        assertThat(jsCounter.getTopFive(), hasItem("js='https://stats.wp.com/e-201950.js\t=\t2"));
+        assertThat(jsCounter.getJsMapStorage().getTop(),hasSize(5));
+        assertThat(jsCounter.getJsMapStorage().getTop(), hasItem("js='https://stats.wp.com/e-201950.js\t=\t2\n"));
     }
 }

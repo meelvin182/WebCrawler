@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class TestSetUp {
 
-    protected ConcurrentHashMap<String, LongAdder> storage = new ConcurrentHashMap<>();
+    protected TopNStorage<String> storage = new TopNStorage(5);
 
     protected PageDownloader pageDownloaderMock = Mockito.mock(PageDownloader.class);
 
