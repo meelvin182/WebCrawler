@@ -28,7 +28,7 @@ public class TopNStorage<T extends Comparable<T>> {
                 .map(e -> "js='" + e.getKey() + "\t=\t" + e.getValue() + "\n")
                 .collect(Collectors.toList());
         Collections.reverse(sorted);
-        return sorted.stream().limit(5).collect(Collectors.toList());
+        return sorted.stream().limit(n).collect(Collectors.toList());
     }
 
     public synchronized Map<T, Integer> getStore() {
