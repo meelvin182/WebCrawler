@@ -26,39 +26,26 @@ class GoogleSearcher {
 
     /**
      * This methods shoud query the google and get the main links for the first page
+     *
      * @param queryParam which param should we query
      * @return List with links to the main pages
      */
     List<String> findMainResultLinks(String queryParam) {
         String googleMainSearch = GOOGLE_QUERY + queryParam;
-        log.info("downloading ={}",googleMainSearch);
+        log.info("downloading ={}", googleMainSearch);
         List<String> mainPage = pageDownloader.downloadPages(Collections.singletonList(googleMainSearch));
         Document doc = Jsoup.parse(mainPage.get(0));
         //CSS query to select all child from kCrYt
         // I do not love the solution with hard-coded div class, but could not google anything better (using google search engine is even worse)
         Elements firstPageLinks = doc.select("div.kCrYT > a[href]");
-        return firstPageLinks.stream().
-                map(s -> s.attr("href"))
-                .map(this::removeUrlQ)
+        return firstPageLinks.stream()
+                .map(link -> link.attr("href"))
+                .map(UrlExtractorFunctions::removeUrlQ)
                 .map(Objects::toString)
                 .map(UrlExtractorFunctions::extractBeforeAmpersand)
-                .map(this::extractBeforeQuestionMark)
+                .map(UrlExtractorFunctions::extractBeforeQuestionMark)
                 .collect(Collectors.toList());
     }
 
-    private String extractBeforeQuestionMark(String url){
-        String tmp = url;
-        if (url.contains("?")) {
-            tmp = url.substring(0, url.indexOf("?"));
-        }
-        if (url.contains("%3F")) {
-            tmp = url.substring(0, url.indexOf("%3F"));
-        }
-        return tmp;
-    }
-
-    private String removeUrlQ(String url) {
-        return url.replace("/url?q=", "");
-    }
 
 }

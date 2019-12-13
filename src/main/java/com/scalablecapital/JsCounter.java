@@ -45,22 +45,21 @@ class JsCounter {
             Document document = Jsoup.parse(page);
             List<String> scripts = document.select("script").stream().map(s -> s.attr("src")).collect(Collectors.toList());
             for (String scriptSource : scripts) {
-                Optional.of(scriptSource).map(UrlExtractorFunctions::extractBeforeAmpersand).map(UrlExtractorFunctions::extractBeforejsExtention).map(s -> {
-                    if (!s.isEmpty()) {
-                        log.debug("found {}", s);
-                        jsMapStorage
-                                .computeIfAbsent(Optional.of(s)
-                                                .map(UrlExtractorFunctions::extractBeforejsExtention)
-                                                .orElseThrow(() -> new RuntimeException("Failed to compute"))
-                                        , key -> new LongAdder()).increment();
-                    }
-                    return jsMapStorage;
-                });
+                Optional.of(scriptSource)
+                        .map(UrlExtractorFunctions::extractBeforeAmpersand)
+                        .map(UrlExtractorFunctions::extractBeforejsExtention)
+                        .map(script -> {
+                            if (!script.isEmpty()) {
+                                log.debug("found {}", script);
+                                jsMapStorage
+                                        .computeIfAbsent(UrlExtractorFunctions.extractBeforejsExtention(script)
+                                                , key -> new LongAdder()).increment();
+                            }
+                            return jsMapStorage;
+                        });
             }
         }
     }
-
-
 
 
     /**

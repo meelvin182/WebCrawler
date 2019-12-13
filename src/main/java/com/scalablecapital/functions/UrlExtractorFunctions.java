@@ -19,4 +19,20 @@ public class UrlExtractorFunctions {
         return tmp;
     }
 
+    public static String extractBeforeQuestionMark(String url) {
+        String tmp = url;
+        if (url.contains("?")) {
+            tmp = url.substring(0, url.indexOf("?"));
+        }
+        if (url.contains("%3F")) {
+            tmp = url.substring(0, url.indexOf("%3F"));
+        }
+        return tmp;
+    }
+
+    public static String removeUrlQ(String url) {
+        return url.replace("/url?q=", "");
+    }
+
+
 }
