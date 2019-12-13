@@ -20,18 +20,18 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 class GoogleSearcher {
 
-    private static final String GOOGLE_QUERY = "http://www.google.com/search?&ie=utf-8&oe=utf-8&q=";
+    private static final String GOOGLE_URL = "http://www.google.com/search?&ie=utf-8&oe=utf-8&q=";
 
     private final PageDownloader pageDownloader;
 
     /**
-     * This methods shoud query the google and get the main links for the first page
+     * This method queries the Google and get the main links for the first page
      *
      * @param queryParam which param should we query
      * @return List with links to the main pages
      */
     List<String> findMainResultLinks(String queryParam) {
-        String googleMainSearch = GOOGLE_QUERY + queryParam;
+        String googleMainSearch = GOOGLE_URL + queryParam;
         log.info("downloading ={}", googleMainSearch);
         List<String> mainPage = pageDownloader.downloadPages(Collections.singletonList(googleMainSearch));
         Document doc = Jsoup.parse(mainPage.get(0));
