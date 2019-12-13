@@ -41,7 +41,7 @@ class JsCounter {
             for (String scriptSource : scripts) {
                 String script = UrlExtractorFunctions.extractBeforeAmpersand(scriptSource);
                 script = UrlExtractorFunctions.extractBeforeAmpersand(script);
-                script =UrlExtractorFunctions.extractBeforejsExtention(script);
+                script = UrlExtractorFunctions.extractBeforejsExtention(script);
                 if(!script.isEmpty()){
                     log.debug("found {}", script);
                     jsMapStorage.add(script);
