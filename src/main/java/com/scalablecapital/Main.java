@@ -38,18 +38,19 @@ public class Main {
          7) ???
          8) PROFIT
          BUT this kind of solution is undebugable and too complex to test
+         See branch secondVersion https://github.com/meelvin182/WebCrawler/tree/secondVersion
          */
 
-        Map<String, LongAdder> storage = new ConcurrentHashMap<>();
+        TopNStorage<String> topNStorage = new TopNStorage<>(5);
         PageDownloader pageDownloader = new PageDownloader(client);
         GoogleSearcher googleSearcher = new GoogleSearcher(pageDownloader);
-        JsCounter jsCounter = new JsCounter(storage, pageDownloader);
+        JsCounter jsCounter = new JsCounter(topNStorage, pageDownloader);
 
         List<String> mainResultLinks = googleSearcher.findMainResultLinks(googleQuery);
 
         jsCounter.downloadAndCountJsLibs(mainResultLinks);
 
-        jsCounter.getTopFive().forEach(System.out::println);
+        jsCounter.getJsMapStorage().getTop().forEach(System.out::println);
 
     }
 
