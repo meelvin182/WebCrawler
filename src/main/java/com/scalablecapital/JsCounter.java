@@ -8,14 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
-
-import static com.scalablecapital.functions.UrlExtractorFunctions.*;
 
 
 @Slf4j
@@ -45,16 +39,13 @@ class JsCounter {
             Document document = Jsoup.parse(page);
             List<String> scripts = document.select("script").stream().map(s -> s.attr("src")).collect(Collectors.toList());
             for (String scriptSource : scripts) {
-                Optional.of(scriptSource)
-                        .map(UrlExtractorFunctions::extractBeforeAmpersand)
-                        .map(UrlExtractorFunctions::extractBeforejsExtention)
-                        .map(script -> {
-                            if (!script.isEmpty()) {
-                                log.debug("found {}", script);
-                                jsMapStorage.add(script);
-                            }
-                            return jsMapStorage;
-                        });
+                String script = UrlExtractorFunctions.extractBeforeAmpersand(scriptSource);
+                script = UrlExtractorFunctions.extractBeforeAmpersand(script);
+                script =UrlExtractorFunctions.extractBeforejsExtention(script);
+                if(!script.isEmpty()){
+                    log.debug("found {}", script);
+                    jsMapStorage.add(script);
+                }
             }
         }
     }
