@@ -40,7 +40,9 @@ public class Main {
 
         HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
         TopNStorage<String> storage = new TopNStorage<>(5);
-
+        /*
+        This is second and more laconic solution, but undebugable and too complex to test
+         */
         CompletableFuture<List<String>> href =
                 downloadPage(httpClient, GOOGLE_QUERY + userQuery)
                         .thenApply(Main::parseGoogleResultPage)
