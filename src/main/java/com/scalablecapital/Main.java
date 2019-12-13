@@ -39,6 +39,7 @@ public class Main {
          8) PROFIT
          BUT this kind of solution is undebugable and too complex to test
          See branch secondVersion https://github.com/meelvin182/WebCrawler/tree/secondVersion
+         Integration test can be written using http://www.mock-server.com/
          */
 
         TopNStorage<String> topNStorage = new TopNStorage<>(5);
