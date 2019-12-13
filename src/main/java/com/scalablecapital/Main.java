@@ -41,7 +41,8 @@ public class Main {
         HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
         TopNStorage<String> storage = new TopNStorage<>(5);
         /*
-        This is second and more laconic solution, but undebugable and too complex to test
+        This is second and more laconic solution, but difficult to debug
+        Each function can be tested and integration tests can be done using http://www.mock-server.com/
          */
         CompletableFuture<List<String>> href =
                 downloadPage(httpClient, GOOGLE_QUERY + userQuery)
