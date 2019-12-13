@@ -14,7 +14,7 @@ public class UrlExtractorFunctions {
     public static String extractBeforejsExtention(String libName) {
         String tmp = libName;
         if (libName.contains(".js") && !libName.endsWith(".js")) {
-            tmp = libName.substring(0, libName.indexOf(".js") + 4);
+            tmp = libName.substring(0, libName.indexOf(".js") + 3);
         }
         return tmp;
     }
