@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author sokolov
  */
+
 @Slf4j
 public class Main {
 
