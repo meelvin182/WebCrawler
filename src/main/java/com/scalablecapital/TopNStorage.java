@@ -22,11 +22,11 @@ public class TopNStorage<T extends Comparable<T>> {
         });
     }
 
-    public synchronized List<String> getTop() {
+    public synchronized List<T> getTop() {
         return store.entrySet().stream()
-                .sorted(Comparator.comparingInt(Map.Entry::getValue))
+                .sorted(Comparator.<Map.Entry<T, Integer>>comparingInt(Map.Entry::getValue).reversed())
                 .limit(n)
-                .map(e -> "js='" + e.getKey() + "\t=\t" + e.getValue()+"\n")
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
